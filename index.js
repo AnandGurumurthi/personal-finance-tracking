@@ -5,6 +5,8 @@ var app = express();
 var formidable = require("formidable");
 var util = require('util');
 
+var mongodb = require('mongodb');
+
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
@@ -69,3 +71,38 @@ function processAllFieldsOfTheForm(request, response) {
         }));
     });
 }
+
+app.get('/thelist', function(request, response){
+ 
+  // Get a Mongo client to work with the Mongo server
+  var MongoClient = mongodb.MongoClient;
+ 
+  // Define where the MongoDB server is
+  var url = 'mongodb://test:test@ds141108.mlab.com:41108/heroku_w4v89h8f';
+ 
+  // Connect to the server
+  MongoClient.connect(url, function (err, db) {
+  if (err) {
+    response.send('Unable to connect to the Server', err);
+  } else {
+    // We are connected
+    //response.send('Connection established');
+ 
+    // Get the documents collection
+    var collection = db.collection('income');
+ 
+    // Find all students
+    collection.find({}).toArray(function (err, result) {
+      if (err) {
+        response.send(err);
+      } else if (result.length) {
+            response.send(result);
+      } else {
+        response.send('No documents found');
+      }
+      //Close connection
+      db.close();
+    });
+  }
+  });
+});
