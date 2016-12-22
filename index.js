@@ -85,13 +85,11 @@ app.get('/list', function(request, response){
         collection.find({}).toArray(function (err, result) {
           if (err) {
             response.send(err);
-        } else if (result.length) {
+        } else {
             response.render('pages/list', {
                 results: result
             });
-        } else {
-            response.send('No documents found');
-        }
+        } 
         //Close connection
         db.close();
       });
