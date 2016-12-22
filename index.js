@@ -21,24 +21,32 @@ app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
-app.get('/add', function(request, response) {
-  response.render('pages/form');
+app.get('/addExpense', function(request, response) {
+  response.render('pages/expense');
 });
 
-app.post('/add', function(request, response) {
-  processAllFieldsOfTheForm(request, response);
+app.post('/addExpense', function(request, response) {
+  processAllFieldsOfTheForm(request, response, "expense");
 });
 
-function processAllFieldsOfTheForm(request, response) {
+app.get('/addIncome', function(request, response) {
+  response.render('pages/income');
+});
+
+app.post('/addIncome', function(request, response) {
+  processAllFieldsOfTheForm(request, response, "income");
+});
+
+function processAllFieldsOfTheForm(request, response, type) {
     var form = new formidable.IncomingForm();
     form.parse(request, function (err, fields, files) {
-        insertExpense(fields, response);
+        insertData(fields, response, type);
     });
 }
 
-function insertExpense(fields, response) {
-
+function insertData(fields, response, type) {
   console.log(fields);
+  var status = true;
   var MongoClient = mongodb.MongoClient;
   var url = 'mongodb://test:test@ds141108.mlab.com:41108/heroku_w4v89h8f';
   MongoClient.connect(url, function (err, db) {
@@ -47,44 +55,46 @@ function insertExpense(fields, response) {
     } else {
         var collection = db.collection('finance');
         collection.insert(fields, function(err, result) {
-          if (err) {
-            response.render('pages/form', {
-                err: err
-            });
-        } else {
-            response.render('pages/form', {
-                success: "success"
-            });
-        }
-      //Close connection
-      db.close();
-  });
+            if (err) {
+                status = false;
+            }
+        //Close connection
+        db.close();
+    });
     }
-});
+  });
+  if(type == 'income') {
+    response.render('pages/income', {
+        result: status
+    });
+  } else {
+    response.render('pages/expense', {
+        result: status
+    });
+  }
 }
 
 app.get('/list', function(request, response){
-
   var MongoClient = mongodb.MongoClient;
   var url = 'mongodb://test:test@ds141108.mlab.com:41108/heroku_w4v89h8f';
   MongoClient.connect(url, function (err, db) {
       if (err) {
         response.send('Unable to connect to the Server', err);
     } else {
-    var collection = db.collection('finance');
-    collection.find({}).toArray(function (err, result) {
-      if (err) {
-        response.send(err);
-    } else if (result.length) {
-        response.render('pages/list', {
-            results: result
-        });
-    } else {
-        response.send('No documents found');
+        var collection = db.collection('finance');
+        collection.find({}).toArray(function (err, result) {
+          if (err) {
+            response.send(err);
+        } else if (result.length) {
+            response.render('pages/list', {
+                results: result
+            });
+        } else {
+            response.send('No documents found');
+        }
+        //Close connection
+        db.close();
+      });
     }
-    //Close connection
-    db.close();
   });
-}
-});
 });
