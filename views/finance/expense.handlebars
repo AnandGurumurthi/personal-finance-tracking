@@ -12,19 +12,22 @@ $(document).ready(function() {
 <div class="alert alert-danger">{{msg}}</div>
 {{/each}}
 {{/if}}
-<div>
-	<form class="form-inline" action="/finance/expense" method="post">
+<div class="col-lg-4">
+	<form action="/finance/expense" method="post">
 		<div class="form-group">
 			<label for="category">Category</label>
-			<select class="form-control expense-category" id="category" name="category" style="width: 200px;">
+			<select class="form-control expense-category" id="category" name="category">
 				<option value="Groceries">Groceries</option>
 				<option value="Entertainment">Entertainment</option>
 			</select>
 		</div>
-		<div class="form-group" style="margin-left: 10px;">
+		<div class="form-group">
 			<label for="amount">Amount</label>
-			<input type="text" class="form-control" id="amount" name="amount" placeholder="Enter amount">
+			<div class="input-group">
+				<div class="input-group-addon">$</div>
+				<input type="text" class="form-control" id="amount" name="amount">
+			</div>
 		</div>
-		<button type="submit" class="btn btn-default" style="margin-left: 10px;">Add Expense</button>
+		<button type="submit" class="btn btn-primary">Add Expense</button>
 	</form>
 </div>

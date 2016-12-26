@@ -34,6 +34,7 @@
           </ul>
           <ul class="nav navbar-nav navbar-right" style="margin-right: 20px">
             {{#if user}}
+            <li><p class="navbar-text">Signed in as {{user.name}}</p></li>
             <li><a href="/users/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             {{else}}
             <li><a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
