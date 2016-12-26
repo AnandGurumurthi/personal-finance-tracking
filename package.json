@@ -1,0 +1,29 @@
+{
+  "name": "personal-finance-tracking",
+  "version": "0.0.1",
+  "description": "A simple personal finance tracker",
+  "engines": {
+    "node": "6.9.2"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ejs": "2.4.1",
+    "express": "4.13.3",
+    "formidable": "^1.0.17",
+    "fs": "0.0.1-security",
+    "mongodb": "^2.2.16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnandGurumurthi/personal-finance-tracking"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
+}
