@@ -1,0 +1,51 @@
+<script type="text/javascript">
+function formatCurrency(n) {
+    return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+}
+</script>
+
+<div class="container">
+	<h2>Results</h2>
+	<div class="table-responsive">
+		<table class="table table-bordered">
+			<thead class="thead-inverse">
+				<tr>
+					<th>Item</th>
+					<th>Expense</th>
+					<th>Income</th>
+				</tr>
+			</thead>
+			<tbody>
+				<script type="text/javascript">
+					var net = Number(0);
+				</script>
+				{{#each results}}
+				<tr>
+					<td>{{ this.category }}</td>
+					{{#if (if_eq this.type 'Income')}}
+					<script type="text/javascript">
+						net = net + Number({{ this.amount }});
+					</script>
+					<td></td>
+					<td>{{ formatCurrency this.amount }}</td>
+					{{else}}
+					<script type="text/javascript">
+						net = net - Number({{ this.amount }});
+					</script>
+					<td>{{ formatCurrency this.amount }}</td>
+					<td></td>
+					{{/if}}
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+
+	<div>
+		<strong>
+			<script type="text/javascript">
+				document.write("Net - " + formatCurrency(net));
+			</script>
+		</strong>
+	</div>
+</div>

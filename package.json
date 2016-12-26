@@ -10,11 +10,20 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "ejs": "2.4.1",
-    "express": "4.13.3",
-    "formidable": "^1.0.17",
-    "fs": "0.0.1-security",
-    "mongodb": "^2.2.16"
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "connect-flash": "*",
+    "cookie-parser": "^1.4.1",
+    "express": "*",
+    "express-handlebars": "*",
+    "express-messages": "*",
+    "express-session": "*",
+    "express-validator": "*",
+    "mongodb": "*",
+    "mongoose": "*",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*"
   },
   "repository": {
     "type": "git",

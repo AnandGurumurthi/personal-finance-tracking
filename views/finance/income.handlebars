@@ -1,0 +1,30 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$(".income-category").select2({
+		tags: true
+	});
+});
+</script>
+
+<h2 class="page-header">Add Income</h2>
+{{#if errors}}
+{{#each errors}}
+<div class="alert alert-danger">{{msg}}</div>
+{{/each}}
+{{/if}}
+<div>
+	<form class="form-inline" action="/finance/income" method="post">
+		<div class="form-group">
+			<label for="category">Category</label>
+			<select class="form-control income-category" id="category" name="category" style="width: 200px;">
+				<option value="Salary">Salary</option>
+				<option value="Bonus">Bonus</option>
+			</select>
+		</div>
+		<div class="form-group" style="margin-left: 10px;">
+			<label for="amount">Amount</label>
+			<input type="text" class="form-control" id="amount" name="amount" placeholder="Enter amount">
+		</div>
+		<button type="submit" class="btn btn-default" style="margin-left: 10px;">Add Income</button>
+	</form>
+</div>
