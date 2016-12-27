@@ -19,6 +19,7 @@ router.post('/income', ensureAuthenticated, function(req, res){
 	// Validation
 	req.checkBody('category', 'Category is required').notEmpty();
 	req.checkBody('amount', 'Amount is required').notEmpty();
+	req.checkBody('amount', 'Amount should contain only numbers').isNumeric();
 
 	var errors = req.validationErrors();
 
@@ -61,6 +62,7 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 	// Validation
 	req.checkBody('category', 'Category is required').notEmpty();
 	req.checkBody('amount', 'Amount is required').notEmpty();
+	req.checkBody('amount', 'Amount should contain only numbers').isNumeric();
 
 	var errors = req.validationErrors();
 
