@@ -11,7 +11,7 @@ router.get('/income', ensureAuthenticated, function(req, res){
 });
 
 router.post('/income', ensureAuthenticated, function(req, res){
-	var username = req.user.username;
+	var user_id = req.user.id;
 	var category = req.body.category;
 	var amount = req.body.amount;
 	var type = 'Income';
@@ -30,7 +30,7 @@ router.post('/income', ensureAuthenticated, function(req, res){
 		});
 	} else {
 		var newTransaction = new Finance({
-			username: username,
+			user_id: user_id,
 			amount: amount,
 			category: category,
 			type: type
@@ -54,7 +54,7 @@ router.get('/expense', ensureAuthenticated, function(req, res){
 });
 
 router.post('/expense', ensureAuthenticated, function(req, res){
-	var username = req.user.username;
+	var user_id = req.user.id;
 	var category = req.body.category;
 	var amount = req.body.amount;
 	var type = 'Expense';
@@ -73,7 +73,7 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 		});
 	} else {
 		var newTransaction = new Finance({
-			username: username,
+			user_id: user_id,
 			amount: amount,
 			category: category,
 			type: type
@@ -91,7 +91,7 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 
 // View All
 router.get('/view-all', ensureAuthenticated, function(req, res){
-	Finance.getAllTransaction(req.user.username, function(err, results){
+	Finance.getAllTransactionForUser(req.user.id, function(err, results){
 		if(err) throw err;
 		res.render('finance/view-all',{
 			title: 'View All - ',
@@ -107,13 +107,6 @@ function ensureAuthenticated(req, res, next){
 		req.flash('error_msg','You are not logged in');
 		res.redirect('/users/login');
 	}
-}
-
-function processAllFieldsOfTheForm(request, response, type) {
-	var form = new formidable.IncomingForm();
-	form.parse(request, function (err, fields, files) {
-		insertData(fields, response, type);
-	});
 }
 
 module.exports = router;

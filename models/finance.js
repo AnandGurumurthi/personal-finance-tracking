@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 // Transaction Schema
 var TransactionSchema = mongoose.Schema({
-  username: {
+  user_id: {
     type: String,
     index:true
   },
@@ -23,7 +23,7 @@ module.exports.createTransaction = function(transaction, callback){
   transaction.save(callback);
 }
 
-module.exports.getAllTransaction = function(username, callback){
-  var query = {username: username};
+module.exports.getAllTransactionForUser = function(user_id, callback){
+  var query = {user_id: user_id};
   Transaction.find(query, callback);
 }
