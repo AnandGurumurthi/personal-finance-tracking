@@ -5,11 +5,12 @@ function formatCurrency(n) {
 </script>
 
 <div class="container">
-	<h2>Results</h2>
+	<h2>All Transactions</h2>
 	<div class="table-responsive">
 		<table class="table table-bordered">
 			<thead class="thead-inverse">
 				<tr>
+					<th>Date</th>
 					<th>Item</th>
 					<th>Expense</th>
 					<th>Income</th>
@@ -21,6 +22,7 @@ function formatCurrency(n) {
 				</script>
 				{{#each results}}
 				<tr>
+					<td>{{ formatDate this.dateOfTransaction }}</td>
 					<td>{{ this.category }}</td>
 					{{#if (if_eq this.type 'Income')}}
 					<script type="text/javascript">

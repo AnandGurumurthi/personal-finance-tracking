@@ -15,11 +15,14 @@ router.post('/income', ensureAuthenticated, function(req, res){
 	var category = req.body.category;
 	var amount = req.body.amount;
 	var type = 'Income';
+	var dateOfTransaction = req.body.date;
 
 	// Validation
 	req.checkBody('category', 'Category is required').notEmpty();
 	req.checkBody('amount', 'Amount is required').notEmpty();
-	req.checkBody('amount', 'Amount should contain only numbers').isCurrency();
+	req.checkBody('amount', 'Amount should be in currency format').isCurrency();
+	req.checkBody('date', 'Date of transaction is required').notEmpty();
+	req.checkBody('date', 'Date of transaction should be of date format (mm/dd/yyyy)').isDate();
 
 	var errors = req.validationErrors();
 
@@ -33,12 +36,13 @@ router.post('/income', ensureAuthenticated, function(req, res){
 			user_id: user_id,
 			amount: amount,
 			category: category,
-			type: type
+			type: type,
+			dateOfTransaction: dateOfTransaction
 		});
 
 		Finance.createTransaction(newTransaction, function(err, user){
 			if(err) throw err;
-			console.log(newTransaction);
+			console.log("Transaction created successfully with id - " + newTransaction.id);
 		});
 
 		req.flash('success_msg', 'Income successfully created');
@@ -58,11 +62,14 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 	var category = req.body.category;
 	var amount = req.body.amount;
 	var type = 'Expense';
+	var dateOfTransaction = req.body.date;
 
 	// Validation
 	req.checkBody('category', 'Category is required').notEmpty();
 	req.checkBody('amount', 'Amount is required').notEmpty();
-	req.checkBody('amount', 'Amount should contain only numbers').isCurrency();
+	req.checkBody('amount', 'Amount should be in currency format').isCurrency();
+	req.checkBody('date', 'Date of transaction is required').notEmpty();
+	req.checkBody('date', 'Date of transaction should be of date format (mm/dd/yyyy)').isDate();
 
 	var errors = req.validationErrors();
 
@@ -76,12 +83,13 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 			user_id: user_id,
 			amount: amount,
 			category: category,
-			type: type
+			type: type,
+			dateOfTransaction: dateOfTransaction
 		});
 
 		Finance.createTransaction(newTransaction, function(err, transaction){
 			if(err) throw err;
-			console.log(transaction);
+			console.log("Transaction created successfully with id - " + newTransaction.id);
 		});
 
 		req.flash('success_msg', 'Expense successfully created');
