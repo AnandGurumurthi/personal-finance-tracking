@@ -108,6 +108,16 @@ router.get('/view-all', ensureAuthenticated, function(req, res){
 	});
 });
 
+router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
+	var transactionId = req.params.id;
+	Finance.deleteTranscation(transactionId, function(err, results){
+		if(err) throw err;
+		console.log("Transaction deleted successfully with id - " + transactionId);
+		req.flash('success_msg', 'Transaction successfully deleted');
+		res.redirect('/finance/view-all');
+	});
+});
+
 function ensureAuthenticated(req, res, next){
 	if(req.isAuthenticated()){
 		return next();

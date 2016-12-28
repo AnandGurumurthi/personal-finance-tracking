@@ -1,19 +1,26 @@
-<script type="text/javascript">
-function formatCurrency(n) {
-    return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
-}
-</script>
+<style type="text/css">
+	.center { text-align: center; }
+	.right { text-align: right; }
+	.spacer {  margin-top: 40px; clear:both; }
+</style>
 
 <div class="container">
 	<h2>All Transactions</h2>
-	<div class="table-responsive">
-		<table class="table table-bordered">
+	{{#if errors}}
+		{{#each errors}}
+			<div class="alert alert-danger">{{msg}}</div>
+		{{/each}}
+	{{/if}}
+
+	<div class="table-responsive col-md-8 spacer">
+		<table class="table table-bordered table-hover table-condensed">
 			<thead class="thead-inverse">
 				<tr>
-					<th>Date</th>
-					<th>Item</th>
-					<th>Expense</th>
-					<th>Income</th>
+					<th class="col-md-2 center">Date</th>
+					<th class="col-md-5 center">Item</th>
+					<th class="col-md-2 center">Expense</th>
+					<th class="col-md-2 center">Income</th>
+					<th class="col-md-1 center">Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -22,32 +29,40 @@ function formatCurrency(n) {
 				</script>
 				{{#each results}}
 				<tr>
-					<td>{{ formatDate this.dateOfTransaction }}</td>
+					<td class="center">{{ formatDate this.dateOfTransaction }}</td>
 					<td>{{ this.category }}</td>
 					{{#if (if_eq this.type 'Income')}}
 					<script type="text/javascript">
 						net = net + Number({{ this.amount }});
 					</script>
 					<td></td>
-					<td>{{ formatCurrency this.amount }}</td>
+					<td class="right">{{ formatCurrency this.amount }}</td>
 					{{else}}
 					<script type="text/javascript">
 						net = net - Number({{ this.amount }});
 					</script>
-					<td>{{ formatCurrency this.amount }}</td>
+					<td class="right">{{ formatCurrency this.amount }}</td>
 					<td></td>
 					{{/if}}
+					<td class="center"><a href="/finance/deleteTransaction/{{ this.id }}"><span class="glyphicon glyphicon-trash"></span></a></td>
 				</tr>
 				{{/each}}
 			</tbody>
 		</table>
 	</div>
 
-	<div>
-		<strong>
-			<script type="text/javascript">
-				document.write("Net - " + formatCurrency(net));
-			</script>
-		</strong>
+	<div class="spacer">
+		<p id='answer'></p>
 	</div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	document.getElementById('answer').innerHTML = "<strong>Net - " + formatCurrency(net) + "</strong>";
+});
+
+function formatCurrency(n) {
+    return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+}
+</script>
+
