@@ -11,58 +11,64 @@ function formatCurrency(n) {
 </style>
 
 <div class="container">
-	<h2>All Transactions</h2>
-	{{#if errors}}
-	{{#each errors}}
-	<div class="alert alert-danger">{{msg}}</div>
-	{{/each}}
-	{{/if}}
-
-	{{#each results}}
-	<h4 class="spacer">{{ @key }}</h4>
-	<div class="table-responsive col-md-8 spacer">
-		<table class="table table-bordered table-hover table-condensed">
-			<thead class="thead-inverse">
-				<tr>
-					<th class="col-md-2 center">Date</th>
-					<th class="col-md-5 center">Item</th>
-					<th class="col-md-2 center">Expense</th>
-					<th class="col-md-2 center">Income</th>
-					<th class="col-md-1 center">Delete</th>
-				</tr>
-			</thead>
-			<tbody>
+	<div class="row">
+		<div class="col-sm-9">
+			<h2>All Transactions</h2>
+			{{#if errors}}
+			{{#each errors}}
+			<div class="alert alert-danger">{{msg}}</div>
+			{{/each}}
+			{{/if}}
+			{{#each results}}
+			<h4 class="spacer">{{ @key }}</h4>
+			<div class="table-responsive col-sm-12 spacer">
+				<table class="table table-bordered table-hover table-condensed">
+					<thead class="thead-inverse">
+						<tr>
+							<th class="col-md-2 center">Date</th>
+							<th class="col-md-5 center">Item</th>
+							<th class="col-md-2 center">Expense</th>
+							<th class="col-md-2 center">Income</th>
+							<th class="col-md-1 center">Delete</th>
+						</tr>
+					</thead>
+					<tbody>
+						<script type="text/javascript">
+						var net = Number(0);
+						</script>
+						{{#each this}}
+						<tr>
+							<td class="center">{{ formatDate this.dateOfTransaction }}</td>
+							<td>{{ this.category }}</td>
+							{{#if (if_eq this.type 'Income')}}
+							<script type="text/javascript">
+							net = net + Number({{ this.amount }});
+							</script>
+							<td></td>
+							<td class="right">{{ formatCurrency this.amount }}</td>
+							{{else}}
+							<script type="text/javascript">
+							net = net - Number({{ this.amount }});
+							</script>
+							<td class="right">{{ formatCurrency this.amount }}</td>
+							<td></td>
+							{{/if}}
+							<td class="center"><a href="/finance/deleteTransaction/{{ this.id }}"><span class="glyphicon glyphicon-trash"></span></a></td>
+						</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
+			<div class="spacer">
+				<p id='net-{{@key}}'></p>
 				<script type="text/javascript">
-				var net = Number(0);
+				document.getElementById('net-{{@key}}').innerHTML = "<strong>Balance for the month of {{@key}}: " + formatCurrency(net) + "</strong>";
 				</script>
-				{{#each this}}
-				<tr>
-					<td class="center">{{ formatDate this.dateOfTransaction }}</td>
-					<td>{{ this.category }}</td>
-					{{#if (if_eq this.type 'Income')}}
-					<script type="text/javascript">
-					net = net + Number({{ this.amount }});
-					</script>
-					<td></td>
-					<td class="right">{{ formatCurrency this.amount }}</td>
-					{{else}}
-					<script type="text/javascript">
-					net = net - Number({{ this.amount }});
-					</script>
-					<td class="right">{{ formatCurrency this.amount }}</td>
-					<td></td>
-					{{/if}}
-					<td class="center"><a href="/finance/deleteTransaction/{{ this.id }}"><span class="glyphicon glyphicon-trash"></span></a></td>
-				</tr>
-				{{/each}}
-			</tbody>
-		</table>
+			</div>
+			{{/each}}
+		</div>
+		<div class="col-sm-3">
+			<nav id="toc" data-toggle="toc" class="affix"></nav>
+		</div>
 	</div>
-	<div class="spacer">
-		<p id='net-{{@key}}'></p>
-		<script type="text/javascript">
-			document.getElementById('net-{{@key}}').innerHTML = "<strong>Balance for the month of {{@key}}: " + formatCurrency(net) + "</strong>";
-		</script>
-	</div>
-	{{/each}}
 </div>
