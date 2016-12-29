@@ -3,6 +3,10 @@ var router = express.Router();
 
 var Finance = require('../models/finance');
 
+var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 // Income
 router.get('/income', ensureAuthenticated, function(req, res){
 	res.render('finance/income', {
@@ -101,13 +105,29 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 router.get('/view-all', ensureAuthenticated, function(req, res){
 	Finance.getAllTransactionForUser(req.user.id, function(err, results){
 		if(err) throw err;
+		var processedResults = {};
+		for (var i = 0; i < results.length; i++) {
+			var dateOfTransaction = new Date(results[i].dateOfTransaction);
+			var year = dateOfTransaction.getFullYear();
+			var month = monthNames[dateOfTransaction.getMonth()];
+			var key = month+ " " +year;
+			if(key in processedResults) {
+				var transactionsForMonth = processedResults[key];
+				transactionsForMonth.push(results[i]);
+				processedResults[key] = transactionsForMonth;
+			} else {
+				var transactionsForMonth = [results[i]];
+				processedResults[key] = transactionsForMonth;
+			}
+		}
 		res.render('finance/view-all',{
 			title: 'View All - ',
-			results: results
+			results: processedResults
 		});
 	});
 });
 
+// Delete Transaction
 router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
 	var transactionId = req.params.id;
 	Finance.deleteTranscation(transactionId, function(err, results){
