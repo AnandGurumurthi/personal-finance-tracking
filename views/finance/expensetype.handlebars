@@ -1,0 +1,55 @@
+<style type="text/css">
+.center { text-align: center; }
+.right { text-align: right; }
+.spacer {  margin-top: 20px; clear:both; }
+</style>
+
+<h2 class="page-header">Expense Type</h2>
+
+<div class="col-lg-8">
+	<h3>Add Expense Type</h3>
+	{{#if errors}}
+	{{#each errors}}
+	<div class="alert alert-danger">{{msg}}</div>
+	{{/each}}
+	{{/if}}
+	<form action="/finance/expenseType" method="post">
+		<div class="form-group">
+			<label for="amount">Expense Type</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="expenseType" name="expenseType">
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary">Add Expense Type</button>
+	</form>
+</div>
+
+<div class="col-lg-8">
+	<h3>All Expense Types</h3>
+	{{#if errors}}
+	{{#each errors}}
+	<div class="alert alert-danger">{{msg}}</div>
+	{{/each}}
+	{{/if}}
+	<div class="table-responsive spacer">
+		<table class="table table-bordered table-hover table-condensed">
+			<thead class="thead-inverse">
+				<tr>
+					<th class="col-md-1 center">Expense Type</th>
+					<th class="col-md-1 center">Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<script type="text/javascript">
+				var net = Number(0);
+				</script>
+				{{#each results}}
+				<tr>
+					<td>{{ this.expenseType }}</td>
+					<td class="center"><a href="/finance/deleteExpenseType/{{ this.id }}"><span class="glyphicon glyphicon-trash"></span></a></td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+</div>

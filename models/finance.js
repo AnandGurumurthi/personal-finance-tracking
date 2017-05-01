@@ -20,6 +20,7 @@ var TransactionSchema = mongoose.Schema({
   }
 });
 
+// Transaction methods
 var Transaction = module.exports = mongoose.model('Transaction', TransactionSchema);
 
 module.exports.createTransaction = function(transaction, callback){

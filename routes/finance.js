@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var Finance = require('../models/finance');
+var ExpenseType = require('../models/expensetype');
 
 var monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -56,8 +57,12 @@ router.post('/income', ensureAuthenticated, function(req, res){
 
 // Expense
 router.get('/expense', ensureAuthenticated, function(req, res){
-	res.render('finance/expense', {
-		title: 'Expense - '
+	ExpenseType.getAllExpenseTypeForUser(req.user.id, function(err, expenseTypes){
+		if(err) throw err;
+		res.render('finance/expense', {
+			title: 'Expense - ',
+			expenseTypes: expenseTypes
+		});
 	});
 });
 
@@ -135,6 +140,59 @@ router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
 		console.log("Transaction deleted successfully with id - " + transactionId);
 		req.flash('success_msg', 'Transaction successfully deleted');
 		res.redirect('/finance/view-all');
+	});
+});
+
+// ExpenseType
+router.get('/expenseType', ensureAuthenticated, function(req, res){
+	ExpenseType.getAllExpenseTypeForUser(req.user.id, function(err, results){
+		if(err) throw err;
+		res.render('finance/expenseType',{
+			title: 'View All Expense Types - ',
+			results: results
+		});
+	});
+});
+
+// Create new Expense Type
+router.post('/expenseType', ensureAuthenticated, function(req, res){
+	var user_id = req.user.id;
+	var expenseType = req.body.expenseType;
+
+	// Validation
+	req.checkBody('expenseType', 'Expense Type is required').notEmpty();
+	
+	var errors = req.validationErrors();
+
+	if(errors){
+		res.render('finance/expenseType',{
+			title: 'Expense Type - ',
+			errors: errors
+		});
+	} else {
+		var newExpenseType = new ExpenseType({
+			user_id: user_id,
+			expenseType: expenseType
+		});
+
+		ExpenseType.createExpenseType(newExpenseType, function(err, expenseType){
+			if(err) throw err;
+			console.log("Expense Type created successfully with id - " + newExpenseType.id);
+		});
+
+		req.flash('success_msg', 'Expense type successfully created');
+		res.redirect('/finance/expenseType');
+	}
+});
+
+// Delete Expense Type
+router.get('/deleteExpenseType/:id', ensureAuthenticated, function(req, res){
+	var expenseTypeId = req.params.id;
+	ExpenseType.deleteExpenseType(expenseTypeId, function(err, results){
+		if(err) throw err;
+		console.log("Expense Type deleted successfully with id - " + expenseTypeId);
+		req.flash('success_msg', 'Expense Type successfully deleted');
+		res.redirect('/finance/expenseType');
 	});
 });
 
