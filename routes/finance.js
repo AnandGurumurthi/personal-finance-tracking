@@ -146,7 +146,10 @@ router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
 // ExpenseType
 router.get('/expenseType', ensureAuthenticated, function(req, res){
 	ExpenseType.getAllExpenseTypeForUser(req.user.id, function(err, results){
-		if(err) throw err;
+		if(err) {
+			console.log("Error - " + err);
+			throw err;
+		}
 		res.render('finance/expenseType',{
 			title: 'View All Expense Types - ',
 			results: results
