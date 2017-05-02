@@ -151,7 +151,7 @@ router.get('/expenseType', ensureAuthenticated, function(req, res){
 			console.log("Error - " + err);
 			throw err;
 		}
-		res.render('finance/expenseType',{
+		res.render('finance/expensetype',{
 			title: 'View All Expense Types - ',
 			results: results
 		});
@@ -170,7 +170,7 @@ router.post('/expenseType', ensureAuthenticated, function(req, res){
 	var errors = req.validationErrors();
 
 	if(errors){
-		res.render('finance/expenseType',{
+		res.render('finance/expensetype',{
 			title: 'Expense Type - ',
 			errors: errors
 		});
