@@ -145,6 +145,7 @@ router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
 
 // ExpenseType
 router.get('/expenseType', ensureAuthenticated, function(req, res){
+	console.log("Inside get method");
 	ExpenseType.getAllExpenseTypeForUser(req.user.id, function(err, results){
 		if(err) {
 			console.log("Error - " + err);
@@ -159,6 +160,7 @@ router.get('/expenseType', ensureAuthenticated, function(req, res){
 
 // Create new Expense Type
 router.post('/expenseType', ensureAuthenticated, function(req, res){
+	console.log("Inside post method");
 	var user_id = req.user.id;
 	var expenseType = req.body.expenseType;
 
