@@ -35,6 +35,8 @@ function formatCurrency(n) {
 					<tbody>
 						<script type="text/javascript">
 						var net = Number(0);
+						var income = Number(0);
+						var expense = Number(0);
 						</script>
 						{{#each this}}
 						<tr>
@@ -42,12 +44,14 @@ function formatCurrency(n) {
 							<td>{{ this.category }}</td>
 							{{#if (if_eq this.type 'Income')}}
 							<script type="text/javascript">
+							income = income + Number({{ this.amount }});
 							net = net + Number({{ this.amount }});
 							</script>
 							<td></td>
 							<td class="right">{{ formatCurrency this.amount }}</td>
 							{{else}}
 							<script type="text/javascript">
+							expense = expense + Number({{ this.amount }});
 							net = net - Number({{ this.amount }});
 							</script>
 							<td class="right">{{ formatCurrency this.amount }}</td>
@@ -56,13 +60,22 @@ function formatCurrency(n) {
 							<td class="center"><a href="/finance/deleteTransaction/{{ this.id }}"><span class="glyphicon glyphicon-trash"></span></a></td>
 						</tr>
 						{{/each}}
+						<tr>
+							<td></td>
+							<td><strong>Total</strong></td>
+							<td id='expense-{{@key}}' class="right"></td>
+							<td id='income-{{@key}}' class="right"></td>
+							<td></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
 			<div class="spacer">
 				<p id='net-{{@key}}'></p>
 				<script type="text/javascript">
-				document.getElementById('net-{{@key}}').innerHTML = "<strong>Balance for the month of {{@key}}: " + formatCurrency(net) + "</strong>";
+					document.getElementById('net-{{@key}}').innerHTML = "<strong>Balance for the month of {{@key}}: " + formatCurrency(net) + "</strong>";
+					document.getElementById('expense-{{@key}}').innerHTML = "<strong>" + formatCurrency(expense) + "</strong>";
+					document.getElementById('income-{{@key}}').innerHTML = "<strong>" + formatCurrency(income) + "</strong>";
 				</script>
 			</div>
 			{{/each}}
