@@ -29,7 +29,7 @@ module.exports.createTransaction = function(transaction, callback){
 
 module.exports.getAllTransactionForUser = function(user_id, callback){
   var query = {user_id: user_id};
-  Transaction.find(query, callback).sort({category: 'asc'});
+  Transaction.find(query, callback).sort({dateOfTransaction: 'asc'});
 }
 
 module.exports.deleteTranscation = function(id, callback){
