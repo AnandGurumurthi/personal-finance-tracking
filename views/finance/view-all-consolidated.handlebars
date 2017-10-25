@@ -1,0 +1,48 @@
+<script type="text/javascript">
+function formatCurrency(n) {
+	return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+}
+</script>
+
+<style type="text/css">
+.center { text-align: center; }
+.right { text-align: right; }
+.spacer {  margin-top: 20px; clear:both; }
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-9">
+			<h2 class="page-header">All Transactions - Consolidated Monthly View</h2>
+			{{#if errors}}
+			{{#each errors}}
+			<div class="alert alert-danger">{{msg}}</div>
+			{{/each}}
+			{{/if}}
+			{{#each results}}
+			<h4 class="spacer">{{ @key }}</h4>
+			<div class="table-responsive col-sm-12 spacer">
+				<table class="table table-bordered table-hover table-condensed">
+					<thead class="thead-inverse">
+						<tr>
+							<th class="col-md-5 center">Category</th>
+							<th class="col-md-2 center">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#each this}}
+						<tr>
+							<td>{{ @key }}</td>
+							<td class="right">{{ formatCurrency this }}</td>
+						</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
+			{{/each}}
+		</div>
+		<div class="col-sm-3">
+			<nav id="toc" data-toggle="toc" class="affix"></nav>
+		</div>
+	</div>
+</div>

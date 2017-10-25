@@ -27,7 +27,6 @@ router.post('/income', ensureAuthenticated, function(req, res){
 	req.checkBody('amount', 'Amount is required').notEmpty();
 	req.checkBody('amount', 'Amount should be in currency format').isCurrency();
 	req.checkBody('date', 'Date of transaction is required').notEmpty();
-	req.checkBody('date', 'Date of transaction should be of date format (mm/dd/yyyy)').isDate();
 
 	var errors = req.validationErrors();
 
@@ -78,7 +77,6 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 	req.checkBody('amount', 'Amount is required').notEmpty();
 	req.checkBody('amount', 'Amount should be in currency format').isCurrency();
 	req.checkBody('date', 'Date of transaction is required').notEmpty();
-	req.checkBody('date', 'Date of transaction should be of date format (mm/dd/yyyy)').isDate();
 
 	var errors = req.validationErrors();
 
@@ -127,6 +125,40 @@ router.get('/view-all', ensureAuthenticated, function(req, res){
 		}
 		res.render('finance/view-all',{
 			title: 'View All - ',
+			results: processedResults
+		});
+	});
+});
+
+// View All Consolidated
+router.get('/view-all-consolidated', ensureAuthenticated, function(req, res){
+	Finance.getAllTransactionForUser(req.user.id, function(err, results){
+		if(err) throw err;
+		var processedResults = {};
+		for (var i = 0; i < results.length; i++) {
+			var dateOfTransaction = new Date(results[i].dateOfTransaction);
+			var year = dateOfTransaction.getFullYear();
+			var month = monthNames[dateOfTransaction.getMonth()];
+			var key = month+ " " +year;
+			if(key in processedResults) {
+				var transactionsForMonth = processedResults[key];
+				var categoryKey = results[i].category;
+				if(categoryKey in transactionsForMonth) {
+					var categoryTotal = transactionsForMonth[categoryKey];
+					categoryTotal = categoryTotal + results[i].amount;
+					transactionsForMonth[categoryKey] = categoryTotal;
+				} else {
+					transactionsForMonth[categoryKey] = results[i].amount;
+				}
+				processedResults[key] = transactionsForMonth;
+			} else {
+				var transactionsForMonth = {};
+				transactionsForMonth[results[i].category] = results[i].amount;
+				processedResults[key] = transactionsForMonth;
+			}
+		}
+		res.render('finance/view-all-consolidated',{
+			title: 'View All Consolidated - ',
 			results: processedResults
 		});
 	});
