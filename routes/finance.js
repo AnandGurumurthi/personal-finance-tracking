@@ -157,9 +157,21 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res){
 				processedResults[key] = transactionsForMonth;
 			}
 		}
+
+		// Sort the transactions for each month alphabetically
+		const orderedResults = {};
+		Object.keys(processedResults).forEach(function(key) {
+			const unorderedValues = processedResults[key];
+			const orderedValues = {};
+			Object.keys(unorderedValues).sort().forEach(function(transKey) {
+				orderedValues[transKey] = unorderedValues[transKey];
+			});
+			orderedResults[key] = orderedValues;
+		});
+
 		res.render('finance/view-all-consolidated',{
 			title: 'View All Consolidated - ',
-			results: processedResults
+			results: orderedResults
 		});
 	});
 });
