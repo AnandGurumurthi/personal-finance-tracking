@@ -26,13 +26,13 @@
   <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.css">
   <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.js"></script>
 
-  <link rel="stylesheet" src="/app.css" />
+  <link rel="stylesheet" src="/app.css" >
 </head>
-<body data-spy="scroll" data-target="#toc">
-	<div class="container">
 
-    <div class="header clearfix">
-      <nav class="navbar navbar-default navbar-light">
+<body data-spy="scroll" data-target="#toc" style="padding-top: 70px;">
+	<div class="container">
+    <header>
+      <nav class="navbar navbar-default navbar-inverse navbar-fixed-top">
         <div class="container">
           <ul class="nav navbar-nav">
             <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
@@ -55,29 +55,24 @@
           </ul>
         </div>
       </nav>
-    </div>
-
+    </header>
     <div>
-      <div>
-        {{#if success_msg}}
-        <div class="alert alert-success">{{success_msg}}</div>
-        {{/if}}
+      {{#if success_msg}}
+      <div class="alert alert-success">{{success_msg}}</div>
+      {{/if}}
 
-        {{#if error_msg}}
-        <div class="alert alert-danger">{{error_msg}}</div>
-        {{/if}}
+      {{#if error_msg}}
+      <div class="alert alert-danger">{{error_msg}}</div>
+      {{/if}}
 
-        {{#if error}}
-        <div class="alert alert-danger">{{error}}</div>
-        {{/if}}
+      {{#if error}}
+      <div class="alert alert-danger">{{error}}</div>
+      {{/if}}
 
-        {{{body}}}
-      </div>
+      {{{body}}}
     </div>
-
-    <footer class="footer">
-    </footer>
-
   </div> <!-- /container -->
 </body>
+<footer class="footer">
+</footer>
 </html>

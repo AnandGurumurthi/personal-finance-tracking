@@ -15,3 +15,5 @@ nav[data-toggle='toc'] {
     display: none;
   }
 }
+
+body { padding-top: 70px; }
