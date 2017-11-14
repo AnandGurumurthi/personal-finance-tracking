@@ -1,3 +1,5 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
 <script type="text/javascript">
 function formatCurrency(n) {
 	return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
@@ -22,7 +24,7 @@ function formatCurrency(n) {
 			{{#each results}}
 			<h4 class="spacer">{{ @key }}</h4>
 			<div class="table-responsive col-md-8 spacer">
-				<table class="table table-bordered table-hover table-condensed">
+				<table id="datatable-{{ @key }}" class="table table-bordered table-hover table-condensed">
 					<thead class="thead-inverse">
 						<tr>
 							<th class="col-md-5 center">Category</th>
@@ -30,14 +32,29 @@ function formatCurrency(n) {
 						</tr>
 					</thead>
 					<tbody>
+						<script type="text/javascript">
+						var net = Number(0);
+						</script>
 						{{#each this}}
 						<tr>
 							<td>{{ @key }}</td>
+							<script type="text/javascript">
+							net = net + Number({{ this }});
+							</script>
 							<td class="right">{{ formatCurrency this }}</td>
 						</tr>
 						{{/each}}
+						<tr>
+							<td><strong>Total</strong></td>
+							<td id='net-{{@key}}' class="right"></td>
+						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="spacer">
+				<script type="text/javascript">
+					document.getElementById('net-{{@key}}').innerHTML = "<strong>" + formatCurrency(net) + "</strong>";
+				</script>
 			</div>
 			{{/each}}
 		</div>

@@ -140,21 +140,25 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res){
 			var year = dateOfTransaction.getFullYear();
 			var month = monthNames[dateOfTransaction.getMonth()];
 			var key = month+ " " +year;
-			if(key in processedResults) {
-				var transactionsForMonth = processedResults[key];
-				var categoryKey = results[i].category;
-				if(categoryKey in transactionsForMonth) {
-					var categoryTotal = transactionsForMonth[categoryKey];
-					categoryTotal = categoryTotal + results[i].amount;
-					transactionsForMonth[categoryKey] = categoryTotal;
+			var type = results[i].type;
+
+			if(type != "Income") {
+				if(key in processedResults) {
+					var transactionsForMonth = processedResults[key];
+					var categoryKey = results[i].category;
+					if(categoryKey in transactionsForMonth) {
+						var categoryTotal = transactionsForMonth[categoryKey];
+						categoryTotal = categoryTotal + results[i].amount;
+						transactionsForMonth[categoryKey] = categoryTotal;
+					} else {
+						transactionsForMonth[categoryKey] = results[i].amount;
+					}
+					processedResults[key] = transactionsForMonth;
 				} else {
-					transactionsForMonth[categoryKey] = results[i].amount;
+					var transactionsForMonth = {};
+					transactionsForMonth[results[i].category] = results[i].amount;
+					processedResults[key] = transactionsForMonth;
 				}
-				processedResults[key] = transactionsForMonth;
-			} else {
-				var transactionsForMonth = {};
-				transactionsForMonth[results[i].category] = results[i].amount;
-				processedResults[key] = transactionsForMonth;
 			}
 		}
 
@@ -168,6 +172,8 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res){
 			});
 			orderedResults[key] = orderedValues;
 		});
+
+		//console.log(JSON.stringify(orderedResults));
 
 		res.render('finance/view-all-consolidated',{
 			title: 'View All Consolidated - ',

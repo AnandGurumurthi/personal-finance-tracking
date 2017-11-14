@@ -23,7 +23,8 @@
     "mongoose": "*",
     "passport": "*",
     "passport-http": "*",
-    "passport-local": "*"
+    "passport-local": "*",
+    "bluebird": "*"
   },
   "repository": {
     "type": "git",
