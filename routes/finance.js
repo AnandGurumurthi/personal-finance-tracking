@@ -170,7 +170,7 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
 			}
 			
 			// Build data for graph
-			if(type != "Income" && results[i].amount < "2000" && catIndex != "-1") {
+			if(type != "Income" && results[i].amount < "1300" && catIndex != "-1") {
 				if(monthIndex in dataForGraph) {
 					var transactionsForMonth = dataForGraph[monthIndex];
 					if(categoryIndex in transactionsForMonth) {
