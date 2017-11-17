@@ -131,53 +131,116 @@ router.get('/view-all', ensureAuthenticated, function(req, res){
 });
 
 // View All Consolidated
-router.get('/view-all-consolidated', ensureAuthenticated, function(req, res){
+router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
+	var expenseTypes = [];
+	ExpenseType.getAllExpenseTypeForUser(req.user.id, function(err, results){
+		if(err) throw err;
+		for (var i = 0; i < results.length; i++) {
+			expenseTypes[i] = results[i].expenseType;
+		}
+	});
+
 	Finance.getAllTransactionForUser(req.user.id, function(err, results){
 		if(err) throw err;
 		var processedResults = {};
+		var dataForGraph = [];
+		var dataForTable = [];
+		var months = []; 
+		var categories = [];
+
 		for (var i = 0; i < results.length; i++) {
 			var dateOfTransaction = new Date(results[i].dateOfTransaction);
 			var year = dateOfTransaction.getFullYear();
 			var month = monthNames[dateOfTransaction.getMonth()];
-			var key = month+ " " +year;
+			var monthYear = month+ " " +year;
 			var type = results[i].type;
+			var category = results[i].category;
+			
+			var monthIndex = months.indexOf(monthYear);
+			if(monthIndex == -1) {
+				months.push(monthYear);
+				monthIndex = months.indexOf(monthYear);
+			}
+			var catIndex = expenseTypes.indexOf(category);
 
-			if(type != "Income") {
-				if(key in processedResults) {
-					var transactionsForMonth = processedResults[key];
-					var categoryKey = results[i].category;
-					if(categoryKey in transactionsForMonth) {
-						var categoryTotal = transactionsForMonth[categoryKey];
+			var categoryIndex = categories.indexOf(category);
+			if(catIndex != -1 && categoryIndex == -1) {
+				categories.push(category);
+				categoryIndex = categories.indexOf(category);
+			}
+			
+			// Build data for graph
+			if(type != "Income" && results[i].amount < "2000" && catIndex != "-1") {
+				if(monthIndex in dataForGraph) {
+					var transactionsForMonth = dataForGraph[monthIndex];
+					if(categoryIndex in transactionsForMonth) {
+						var categoryTotal = transactionsForMonth[categoryIndex];
 						categoryTotal = categoryTotal + results[i].amount;
-						transactionsForMonth[categoryKey] = categoryTotal;
+						transactionsForMonth[categoryIndex] = categoryTotal;
 					} else {
-						transactionsForMonth[categoryKey] = results[i].amount;
+						transactionsForMonth[categoryIndex] = results[i].amount;
 					}
-					processedResults[key] = transactionsForMonth;
+					dataForGraph[monthIndex] = transactionsForMonth;
 				} else {
 					var transactionsForMonth = {};
-					transactionsForMonth[results[i].category] = results[i].amount;
-					processedResults[key] = transactionsForMonth;
+					transactionsForMonth[categoryIndex] = results[i].amount;
+					dataForGraph[monthIndex] = transactionsForMonth;
 				}
+			}
+			
+
+			// Build data for table
+			if(categoryIndex in dataForTable) {
+				var transactionsForCategory = dataForTable[categoryIndex];
+				if(monthIndex in transactionsForCategory) {
+					var categoryTotal = transactionsForCategory[monthIndex];
+					categoryTotal = categoryTotal + results[i].amount;
+					transactionsForCategory[monthIndex] = categoryTotal;
+				} else {
+					transactionsForCategory[monthIndex] = results[i].amount;
+				}
+				dataForTable[categoryIndex] = transactionsForCategory;
+			} else {
+				var transactionsForCategory = {};
+				transactionsForCategory[monthIndex] = results[i].amount;
+				dataForTable[categoryIndex] = transactionsForCategory;
 			}
 		}
 
-		// Sort the transactions for each month alphabetically
-		const orderedResults = {};
-		Object.keys(processedResults).forEach(function(key) {
-			const unorderedValues = processedResults[key];
-			const orderedValues = {};
-			Object.keys(unorderedValues).sort().forEach(function(transKey) {
-				orderedValues[transKey] = unorderedValues[transKey];
-			});
-			orderedResults[key] = orderedValues;
-		});
+		//console.log(JSON.stringify(dataForGraph));
 
-		//console.log(JSON.stringify(orderedResults));
+		//console.log(JSON.stringify(dataForTable));
+
+		// Filling empty values in map
+		for (var i = 0; i < dataForGraph.length; i++) {
+			var transactionsForMonth = dataForGraph[i];
+			for (var j = 0; j < categories.length; j++) {
+				if(!(j in transactionsForMonth)) {
+					transactionsForMonth[j] = 0.0;
+				}
+			}
+			dataForGraph[i] = transactionsForMonth;
+		}
+
+		// Filling empty values in map
+		for (var i = 0; i < dataForTable.length; i++) {
+			var transactionsForCategory = dataForTable[i];
+			for (var j = 0; j < months.length; j++) {
+				if(!(j in transactionsForCategory)) {
+					transactionsForCategory[j] = 0.0;
+				}
+			}
+			dataForTable[i] = transactionsForCategory;
+		}
+
+		//console.log(JSON.stringify(dataForGraph));
 
 		res.render('finance/view-all-consolidated',{
 			title: 'View All Consolidated - ',
-			results: orderedResults
+			dataForGraph: dataForGraph,
+			dataForTable: dataForTable,
+			months: months,
+			categories: categories
 		});
 	});
 });
