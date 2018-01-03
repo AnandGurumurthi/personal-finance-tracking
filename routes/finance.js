@@ -106,7 +106,7 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 
 // View All
 router.get('/view-all', ensureAuthenticated, function(req, res){
-	Finance.getAllTransactionForUser(req.user.id, function(err, results){
+	Finance.getAllTransactionForUser(req.user.id, req.query.year, function(err, results){
 		if(err) throw err;
 		var processedResults = {};
 		for (var i = 0; i < results.length; i++) {
@@ -140,7 +140,7 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
 		}
 	});
 
-	Finance.getAllTransactionForUser(req.user.id, function(err, results){
+	Finance.getAllTransactionForUser(req.user.id, req.query.year, function(err, results){
 		if(err) throw err;
 		var processedResults = {};
 		var dataForGraph = [];

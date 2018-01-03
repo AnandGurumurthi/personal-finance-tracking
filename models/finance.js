@@ -27,8 +27,8 @@ module.exports.createTransaction = function(transaction, callback){
   transaction.save(callback);
 }
 
-module.exports.getAllTransactionForUser = function(user_id, callback){
-  var query = {user_id: user_id};
+module.exports.getAllTransactionForUser = function(user_id, year, callback){
+  var query = {user_id: user_id, dateOfTransaction: {"$gte": new Date(year, 1, 1), "$lte": new Date(year, 12, 31)}};
   Transaction.find(query, callback).sort({dateOfTransaction: 'asc'});
 }
 
