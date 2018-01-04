@@ -276,10 +276,26 @@ router.get('/view-all-summary', ensureAuthenticated, function(req, res){
 			}
 		}
 
+		// Sorting the results
+		var newArr = [];
+		for (var key in processedExpenses) {
+		  newArr.push({
+		        key: key,
+		        val: processedExpenses[key]
+		    });
+		}
+		newArr.sort(function(a, b) {
+		  return b.val - a.val;
+		});
+		var sortedExpenses = {};
+		for (var i = 0; i < newArr.length; i++) {
+		    sortedExpenses[newArr[i].key] = newArr[i].val;
+		}
+		
 		res.render('finance/view-all-summary',{
 			title: 'View All Summary - ',
 			processedIncome: processedIncome,
-			processedExpenses: processedExpenses
+			sortedExpenses: sortedExpenses
 		});
 	});
 });
