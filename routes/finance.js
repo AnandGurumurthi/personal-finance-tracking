@@ -208,7 +208,6 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
 		}
 
 		//console.log(JSON.stringify(dataForGraph));
-
 		//console.log(JSON.stringify(dataForTable));
 
 		// Filling empty values in map
@@ -233,8 +232,6 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
 			dataForTable[i] = transactionsForCategory;
 		}
 
-		//console.log(JSON.stringify(dataForGraph));
-
 		res.render('finance/view-all-consolidated',{
 			title: 'View All Consolidated - ',
 			dataForGraph: dataForGraph,
@@ -245,7 +242,7 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
 	});
 });
 
-// View All
+// View All Summary
 router.get('/view-all-summary', ensureAuthenticated, function(req, res){
 	Finance.getAllTransactionForUser(req.user.id, req.query.year, function(err, results){
 		if(err) throw err;
@@ -291,7 +288,7 @@ router.get('/view-all-summary', ensureAuthenticated, function(req, res){
 		for (var i = 0; i < newArr.length; i++) {
 		    sortedExpenses[newArr[i].key] = newArr[i].val;
 		}
-		
+
 		res.render('finance/view-all-summary',{
 			title: 'View All Summary - ',
 			processedIncome: processedIncome,
@@ -303,11 +300,12 @@ router.get('/view-all-summary', ensureAuthenticated, function(req, res){
 // Delete Transaction
 router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
 	var transactionId = req.params.id;
+	var currentYear = (new Date()).getFullYear();
 	Finance.deleteTranscation(transactionId, function(err, results){
 		if(err) throw err;
 		console.log("Transaction deleted successfully with id - " + transactionId);
 		req.flash('success_msg', 'Transaction successfully deleted');
-		res.redirect('/finance/view-all');
+		res.redirect('/finance/view-all?year='+currentYear);
 	});
 });
 
