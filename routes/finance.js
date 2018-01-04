@@ -245,6 +245,45 @@ router.get('/view-all-consolidated', ensureAuthenticated, function(req, res) {
 	});
 });
 
+// View All
+router.get('/view-all-summary', ensureAuthenticated, function(req, res){
+	Finance.getAllTransactionForUser(req.user.id, req.query.year, function(err, results){
+		if(err) throw err;
+		var processedExpenses = {};
+		var processedIncome = {};
+		for (var i = 0; i < results.length; i++) {
+			var type = results[i].type;
+			var category = results[i].category;
+
+			if(type == "Income") {
+				if(category in processedIncome) {
+					var categoryTotal = processedIncome[category];
+					categoryTotal = categoryTotal + results[i].amount;
+					processedIncome[category] = categoryTotal;
+				} else {
+					var categoryTotal = results[i].amount;
+					processedIncome[category] = categoryTotal;
+				}
+			} else {
+				if(category in processedExpenses) {
+					var categoryTotal = processedExpenses[category];
+					categoryTotal = categoryTotal + results[i].amount;
+					processedExpenses[category] = categoryTotal;
+				} else {
+					var categoryTotal = results[i].amount;
+					processedExpenses[category] = categoryTotal;
+				}
+			}
+		}
+
+		res.render('finance/view-all-summary',{
+			title: 'View All Summary - ',
+			processedIncome: processedIncome,
+			processedExpenses: processedExpenses
+		});
+	});
+});
+
 // Delete Transaction
 router.get('/deleteTransaction/:id', ensureAuthenticated, function(req, res){
 	var transactionId = req.params.id;

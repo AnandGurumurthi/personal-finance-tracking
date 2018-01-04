@@ -1,0 +1,92 @@
+<script type="text/javascript">
+function formatCurrency(n) {
+	return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+}
+</script>
+
+<style type="text/css">
+.center { text-align: center; }
+.right { text-align: right; }
+.spacer {  margin-top: 20px; clear:both; }
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-9">
+			<h2 class="page-header">Summary Report</h2>
+			{{#if errors}}
+			{{#each errors}}
+			<div class="alert alert-danger">{{msg}}</div>
+			{{/each}}
+			{{/if}}
+			<script type="text/javascript">
+				var net = Number(0);
+				var income = Number(0);
+				var expense = Number(0);
+			</script>
+			<h4 class="spacer">Income</h4>
+			<div class="table-responsive col-sm-7 spacer">
+				<table class="table table-bordered table-hover table-condensed">
+					<thead class="thead-inverse">
+						<tr>
+							<th class="col-md-5 center">Category</th>
+							<th class="col-md-2 center">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#each processedIncome}}
+						<tr>
+							<td>{{ @key }}</td>
+							<script type="text/javascript">
+							income = income + Number({{ this }});
+							net = net + Number({{ this }});
+							</script>
+							<td class="right">{{ formatCurrency this }}</td>
+						</tr>
+						{{/each}}
+						<tr>
+							<td><strong>Total</strong></td>
+							<td id='income' class="right"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<h4 class="spacer">Expenses</h4>
+			<div class="table-responsive col-sm-7 spacer">
+				<table class="table table-bordered table-hover table-condensed">
+					<thead class="thead-inverse">
+						<tr>
+							<th class="col-md-5 center">Category</th>
+							<th class="col-md-2 center">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#each processedExpenses}}
+						<tr>
+							<td>{{ @key }}</td>
+							<script type="text/javascript">
+							expense = expense + Number({{ this }});
+							net = net - Number({{ this }});
+							</script>
+							<td class="right">{{ formatCurrency this }}</td>
+						</tr>
+						{{/each}}
+						<tr>
+							<td><strong>Total</strong></td>
+							<td id='expense' class="right"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="spacer">
+				<p id='net'></p>
+				<script type="text/javascript">
+					document.getElementById('net').innerHTML = "<strong>Balance for the year: " + formatCurrency(net) + "</strong>";
+					document.getElementById('expense').innerHTML = "<strong>" + formatCurrency(expense) + "</strong>";
+					document.getElementById('income').innerHTML = "<strong>" + formatCurrency(income) + "</strong>";
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
