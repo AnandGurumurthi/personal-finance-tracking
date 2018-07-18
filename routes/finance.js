@@ -4,6 +4,11 @@ var router = express.Router();
 var Finance = require('../models/finance');
 var ExpenseType = require('../models/expensetype');
 
+var formidable = require('formidable');
+
+var fs = require('fs');
+var parse = require('csv-parse');
+
 var monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
@@ -102,6 +107,45 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 		req.flash('success_msg', 'Expense successfully created');
 		res.redirect('/finance/expense');
 	}
+});
+
+router.get('/expense-upload', ensureAuthenticated, function(req, res){
+	res.render('finance/expense-uploader', {
+		title: 'Expense Uploader - '
+	});
+});
+
+router.post('/expense-upload', ensureAuthenticated, function(req, res){
+	var form = new formidable.IncomingForm();
+	form.parse(req, function (err, fields, files) {
+		var path = files.filetoupload.path;
+		var parser = parse({delimiter: ','}, function (err, data) {
+		    data.forEach(function(line) {
+			    var user_id = req.user.id;
+				var category = line[1];
+				var amount = line[2];
+				var type = 'Expense';
+				var dateOfTransaction = line[0];
+
+				var newTransaction = new Finance({
+					user_id: user_id,
+					amount: amount,
+					category: category,
+					type: type,
+					dateOfTransaction: dateOfTransaction
+				});
+
+				Finance.createTransaction(newTransaction, function(err, transaction){
+					if(err) throw err;
+					console.log("Transaction created successfully with id - " + newTransaction.id);
+				});
+		    });    
+		});
+		// read the inputFile, feed the contents to the parser
+		fs.createReadStream(path).pipe(parser);
+		req.flash('success_msg', 'Expense(s) successfully created');
+		res.redirect('/finance/expense-upload');
+	});
 });
 
 // View All

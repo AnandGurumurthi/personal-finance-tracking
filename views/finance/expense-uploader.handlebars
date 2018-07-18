@@ -1,0 +1,16 @@
+<h2 class="page-header">Bulk Upload Expenses</h2>
+{{#if errors}}
+{{#each errors}}
+<div class="alert alert-danger">{{msg}}</div>
+{{/each}}
+{{/if}}
+<div class="col-lg-8">
+	<form action="/finance/expense-upload" method="post" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="filetoupload">File</label>
+			<input type="file" id="filetoupload" name="filetoupload"/>
+			<p class="help-block">Upload a csv containing the expenses. It needs to have Date, Category, Amount</p>
+		</div>
+		<button type="submit" class="btn btn-primary">Add Expense(s)</button>
+	</form>
+</div>
