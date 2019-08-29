@@ -11,7 +11,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-mongoose.connect(process.env.MONGO_URL, {useMongoClient: true, promiseLibrary: require('bluebird')});
+mongoose.connect(process.env.MONGO_URL, {promiseLibrary: require('bluebird')});
 var db = mongoose.connection;
 
 var routes = require('./routes/index');
