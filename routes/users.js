@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+const { check, validationResult } = require('express-validator');
+
 
 var User = require('../models/user');
 
@@ -28,16 +30,19 @@ router.post('/register', function(req, res){
 	var accessCode = req.body.accessCode;
 
 	// Validation
-	req.checkBody('name', 'Name is required').notEmpty();
-	req.checkBody('email', 'Email is required').notEmpty();
-	req.checkBody('email', 'Email is not valid').isEmail();
-	req.checkBody('password', 'Password is required').notEmpty();
-	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-	req.checkBody('accessCode', 'Access code is required').notEmpty();
-	req.checkBody('accessCode', 'Access code is not valid').equals(process.env.ACCESS_CODE);
+	check('name', 'Name is required').not().isEmpty();
+	check('email', 'Email is required').not().isEmpty();
+	check('email', 'Email is not valid').isEmail();
+	check('password', 'Password is required').not().isEmpty();
+	check('password2', 'Passwords do not match').equals(req.body.password);
+	check('accessCode', 'Access code is required').not().isEmpty();
+	check('accessCode', 'Access code is not valid').equals(process.env.ACCESS_CODE);
 
-	var errors = req.validationErrors();
+	var errors = validationResult(req);
 	var existingUserError = null;
+	if (!errors.isEmpty()) {
+    	return res.status(422).json({ errors: errors.array() });
+  	}
 
 	User.getUserByEmail(email, function(err, user){
 		if(user){
