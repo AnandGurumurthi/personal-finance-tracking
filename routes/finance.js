@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+const { check, validationResult } = require('express-validator');
+
 var Finance = require('../models/finance');
 var ExpenseType = require('../models/expensetype');
 
@@ -78,12 +80,12 @@ router.post('/expense', ensureAuthenticated, function(req, res){
 	var dateOfTransaction = req.body.date;
 
 	// Validation
-	req.checkBody('category', 'Category is required').notEmpty();
-	req.checkBody('amount', 'Amount is required').notEmpty();
-	req.checkBody('amount', 'Amount should be in currency format').isCurrency();
-	req.checkBody('date', 'Date of transaction is required').notEmpty();
+	check('category', 'Category is required').not().isEmpty();
+	check('amount', 'Amount is required').not().isEmpty();
+	check('amount', 'Amount should be in currency format').isCurrency();
+	check('date', 'Date of transaction is required').not().isEmpty();
 
-	var errors = req.validationErrors();
+	var errors = validationResult(req);
 
 	if(errors){
 		res.render('finance/expense',{
