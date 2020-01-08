@@ -151,6 +151,46 @@ router.post('/expense-upload', ensureAuthenticated, function(req, res){
 	});
 });
 
+router.get('/income-upload', ensureAuthenticated, function(req, res){
+	res.render('finance/income-uploader', {
+		title: 'Income Uploader - '
+	});
+});
+
+router.post('/income-upload', ensureAuthenticated, function(req, res){
+	var form = new formidable.IncomingForm();
+	form.parse(req, function (err, fields, files) {
+		var path = files.filetoupload.path;
+		var parser = parse({delimiter: ','}, function (err, data) {
+			data.forEach(function(line) {
+				var user_id = req.user.id;
+				var category = line[1];
+				var amount = line[2];
+				var type = 'Income';
+				var dateOfTransaction = line[0];
+
+				var newTransaction = new Finance({
+					user_id: user_id,
+					amount: amount,
+					category: category,
+					type: type,
+					dateOfTransaction: dateOfTransaction
+				});
+
+				Finance.createTransaction(newTransaction, function(err, transaction){
+					if(err) throw err;
+					console.log("Transaction created successfully with id - " + newTransaction.id);
+				});
+			});
+		});
+		// read the inputFile, feed the contents to the parser
+		fs.createReadStream(path).pipe(parser);
+		req.flash('success_msg', 'Income(s) successfully created');
+		res.redirect('/finance/income-upload');
+	});
+});
+
+
 // View All
 router.get('/view-all', ensureAuthenticated, function(req, res){
 	Finance.getAllTransactionForUser(req.user.id, req.query.year, function(err, results){
