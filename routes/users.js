@@ -49,7 +49,7 @@ router.post('/register', function(req, res){
 			existingUserError = "Email address already registered";
 		}
 
-		if(errors || existingUserError){
+		if(!errors.isEmpty() || existingUserError){
 			res.render('users/register',{
 				errors:errors,
 				existingUserError:existingUserError
