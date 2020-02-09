@@ -413,11 +413,10 @@ router.post('/expenseType', ensureAuthenticated, function(req, res){
 	var expenseType = req.body.expenseType;
 
 	// Validation
-	req.checkBody('expenseType', 'Expense Type is required').notEmpty();
-	
-	var errors = req.validationErrors();
+	check('expenseType', 'Expense Type is required').not().isEmpty();
+	var errors = validationResult(req);
 
-	if(errors){
+	if(!errors.isEmpty()){
 		res.render('finance/expensetype',{
 			title: 'Expense Type - ',
 			errors: errors
